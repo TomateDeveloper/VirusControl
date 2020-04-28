@@ -25,6 +25,21 @@ let registeredButtons = [];
  * @type {number}
  */
 let screen = 0;
+/**
+ * This is the score of every level
+ * @type {number}
+ */
+let score = 0;
+/**
+ * This is the timer of every level
+ * @type {number}
+ */
+let timer = 120;
+/**
+ * Will loop countdown only if active
+ * @type {boolean}
+ */
+let activeTimer = false;
 
 /*
     Assets
@@ -46,13 +61,20 @@ function setup() {
 function draw() {
     switch (screen) {
         case 1: {
-            clear();
+            background(96, 157, 255);
+            showScore();
+            showTimer();
             break;
         }
         default: {
             playScreen();
             break;
         }
+    }
+
+    if (activeTimer) {
+        if (frameCount % 60 === 0 && timer > 0) timer --;
+        if (timer < 1) timerOut();
     }
 }
 
@@ -126,7 +148,39 @@ function playScreen() {
     hoverStart.click = function () {
         screen = 1;
         clearButtons();
+        clear();
     }
+}
+
+function showScore() {
+    fill("#000000");
+    textSize(30);
+    text("Puntaje: " + score, 15, 40);
+}
+
+function showTimer() {
+    let seconds = (timer % 60);
+    if (seconds === 0) seconds = '00';
+
+    fill("#000000");
+    textSize(30);
+    text((timer % 3600) / 60 + ":" + seconds, 450, 40);
+}
+
+function addScore(n) {
+    score +=  n;
+}
+
+function removeScore(n) {
+    score -= n;
+}
+
+function resetScore() {
+    score = 0;
+}
+
+function timerOut() {
+    //TODO: Time out :))
 }
 
 /*
