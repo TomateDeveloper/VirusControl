@@ -167,6 +167,14 @@ function showTimer() {
     text((timer % 3600) / 60 + ":" + seconds, 450, 40);
 }
 
+/*
+    Gameplay functions
+ */
+
+function clearButtons() {
+    registeredButtons = [];
+}
+
 function addScore(n) {
     score +=  n;
 }
@@ -181,12 +189,4 @@ function resetScore() {
 
 function timerOut() {
     //TODO: Time out :))
-}
-
-/*
-    Gameplay functions
- */
-
-function clearButtons() {
-    registeredButtons = [];
 }
