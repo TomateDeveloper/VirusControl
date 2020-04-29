@@ -21,6 +21,11 @@
  */
 let registeredButtons = [];
 /**
+ * This array will store all the registered virus just once
+ * @type {Array}
+ */
+let registeredVirus = [];
+/**
  * This is the screen that will be displayed while drawing is executing
  * @type {number}
  */
@@ -64,6 +69,11 @@ function draw() {
             background(96, 157, 255);
             showScore();
             showTimer();
+            let virus = new Virus("test_1", .5, 20, 100, 100);
+            registeredVirus.forEach((virus) => {
+                virus.draw();
+            });
+
             break;
         }
         default: {
@@ -84,6 +94,15 @@ function mousePressed() {
         if (mouseX > button.x && mouseX < (button.x + button.w) && mouseY > button.y && mouseY < (button.y + button.h)) {
             button.click();
         }
+    });
+
+    registeredVirus.forEach((virus) => {
+        const leftTop = (virus.x - (virus.radius / 2));
+        const rightTop = leftTop + virus.radius;
+        const leftBottom = (virus.y - (virus.radius / 2));
+        const rightBottom = leftBottom + virus.radius;
+
+       if (mouseX > leftTop && mouseX < rightTop && mouseY > leftBottom && mouseY < rightBottom) virus.click();
     });
 
 }
@@ -122,12 +141,45 @@ class HoverButton {
             fill(this.hovered);
             rect(this.x, this.y, this.w, this.h);
             fill(this.color);
-            text(this.text, this.x + (this.w / 2), this.y + (this.h / 2));
+            text(this.text, this.x + (this.w / 2) - 20, this.y + (this.h / 2) + 4);
         } else {
             fill(this.color);
             rect(this.x, this.y, this.w, this.h);
             fill(this.hovered);
-            text(this.text, this.x + (this.w / 2), this.y + (this.h / 2));
+            text(this.text, this.x + (this.w / 2) - 20, this.y + (this.h / 2) + 4);
+        }
+    }
+
+    click() {}
+}
+
+class Virus {
+
+    constructor(id, speed, radius, x, y) {
+        this.id = id;
+        this.xSpeed = speed;
+        this.ySpeed = speed;
+        this.x = x;
+        this.radius = radius;
+        this.y = y;
+        this.registerListener(id);
+    }
+
+    draw() {
+
+        fill("#000000");
+        rect((this.x - (this.radius / 2)), (this.y - (this.radius / 2)), this.radius, this.radius);
+        this.x += this.xSpeed;
+        this.y += this.ySpeed;
+
+        if (this.x > width - this.radius || this.x < this.radius) this.xSpeed = -this.xSpeed;
+        if (this.y > height - this.radius || this.y < this.radius) this.ySpeed = -this.ySpeed;
+
+    }
+
+    registerListener(id) {
+        if (!registeredVirus.some((button) => button.id === id)) {
+            registeredVirus.push(this);
         }
     }
 
@@ -159,12 +211,13 @@ function showScore() {
 }
 
 function showTimer() {
-    let seconds = (timer % 60);
+    let minutes = Math.floor(timer / 60);
+    let seconds = Math.floor(timer % 60);
     if (seconds === 0) seconds = '00';
 
     fill("#000000");
     textSize(30);
-    text((timer % 3600) / 60 + ":" + seconds, 450, 40);
+    text(minutes + ":" + seconds, 450, 40);
 }
 
 /*
