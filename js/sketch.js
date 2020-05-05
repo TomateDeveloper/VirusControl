@@ -26,10 +26,13 @@ let registeredButtons = [];
  */
 let registeredVirus = [];
 /**
- * This is the screen that will be displayed while drawing is executing
- * @type {number}
+ * This will be the variable that stores the actual level. If null shall play main menu
  */
-let screen = 0;
+let level = null;
+/**
+ * Check if lose screen is active
+ */
+let playAgain = false;
 /**
  * This is the score of every level
  * @type {number}
@@ -40,6 +43,7 @@ let score = 0;
  * @type {number}
  */
 let timer = 120;
+let spawnRate = 0;
 /**
  * Will loop countdown only if active
  * @type {boolean}
@@ -51,6 +55,7 @@ let activeTimer = false;
  */
 let logo;
 let canvas;
+let levels = [];
 
 /*
     P5.JS Functions
@@ -61,30 +66,34 @@ function preload() {
 
 function setup() {
     canvas = createCanvas(600, 400);
+    levels[0] = new Level("cityOne", 10, "TODO", 120, 2, 3);
+    levels[1] = new Level("cityTwo", 30, "TODO", 180, 30, 3);
+    levels[2] = new Level("cityThree", 50, "TODO", 180, 60, 3);
 }
 
 function draw() {
-    switch (screen) {
-        case 1: {
-            background(96, 157, 255);
-            showScore();
-            showTimer();
-            let virus = new Virus("test_1", .5, 20, 100, 100);
-            registeredVirus.forEach((virus) => {
-                virus.draw();
-            });
+    if (playAgain) {
 
-            break;
-        }
-        default: {
-            playScreen();
-            break;
-        }
+    } else if (level == null) {
+        playScreen();
+    } else {
+        background(96, 157, 255);
+        showScore();
+        showTimer();
+        level.draw();
     }
 
     if (activeTimer) {
         if (frameCount % 60 === 0 && timer > 0) timer --;
         if (timer < 1) timerOut();
+    }
+
+    if (spawnRate > 0) {
+        if (frameCount % 60 === 0) {
+            spawnRate --;
+        }
+    } else if (level != null) {
+        level.generateRate();
     }
 }
 
@@ -155,13 +164,15 @@ class HoverButton {
 
 class Virus {
 
-    constructor(id, speed, radius, x, y) {
+    constructor(id, speed, radius, x, y, health, score) {
         this.id = id;
         this.xSpeed = speed;
         this.ySpeed = speed;
         this.x = x;
         this.radius = radius;
         this.y = y;
+        this.health = health;
+        this.score = score;
         this.registerListener(id);
     }
 
@@ -183,7 +194,62 @@ class Virus {
         }
     }
 
-    click() {}
+    click() {
+        this.health--;
+        if (this.health < 1) {
+            if (level !== null) level.killVirus();
+            registeredVirus = registeredVirus.filter((virus) => virus.id !== this.id);
+            addScore(this.score);
+        }
+    }
+}
+
+class Level {
+
+    constructor(id, difficulty, background, time, virusCount, spawnRate) {
+        this.id = id;
+        this.difficulty = difficulty;
+        this.background = background;
+        this.time = time;
+        this.virusCount = virusCount;
+        this.remainingVirus = virusCount;
+        this.spawnRate = spawnRate;
+    }
+
+    initializeLevel() {
+        activeTimer = true;
+        timer = this.time;
+        this.spawnRate = spawnRate;
+    }
+
+    draw() {
+        this.generateBackground();
+        registeredVirus.forEach((virus) => {
+            virus.draw();
+        });
+    }
+
+    generateRate() {
+        if (this.virusCount > 0) {
+            spawnVirus();
+            spawnRate = this.spawnRate;
+            this.virusCount--;
+        }
+    }
+
+    generateBackground() {
+        //TODO: Generate background
+    }
+
+    killVirus() {
+        this.remainingVirus--;
+        if (this.remainingVirus < 1) this.levelVictory();
+    }
+
+    levelVictory() {
+        console.log("Ganaste el nivel");
+    }
+
 }
 
 /*
@@ -198,7 +264,7 @@ function playScreen() {
 
     const hoverStart = new HoverButton('startButton',200, 270, 200, 30, '#ffffff', '#000000', '¡Jugar!');
     hoverStart.click = function () {
-        screen = 1;
+        level = levels[0];
         clearButtons();
         clear();
     }
@@ -228,6 +294,10 @@ function clearButtons() {
     registeredButtons = [];
 }
 
+function spawnVirus() {
+    let virus = new Virus(registeredVirus.length + 1, .5, 40, 100, 100, 1, 10);
+}
+
 function addScore(n) {
     score +=  n;
 }
@@ -243,3 +313,5 @@ function resetScore() {
 function timerOut() {
     //TODO: Time out :))
 }
+
+
