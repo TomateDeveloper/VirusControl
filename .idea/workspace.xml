@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="d98b11b9-b912-4bb0-8910-b8ce3b683703" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/img/background/ws1.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/sketch.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/sketch.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +51,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/img" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/img/background" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -42,12 +62,13 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Users\WebstormProjects\VirusControl\img\background" />
+      <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl\img" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl" />
       <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl\js" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl\img" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -64,12 +85,28 @@
       <workItem from="1588106185314" duration="1774000" />
       <workItem from="1588110397451" duration="982000" />
       <workItem from="1588189410275" duration="4426000" />
-      <workItem from="1588641313823" duration="6597000" />
+      <workItem from="1588641313823" duration="6660000" />
+      <workItem from="1588691130987" duration="66000" />
+      <workItem from="1588701540043" duration="839000" />
+      <workItem from="1588811325477" duration="1473000" />
+      <workItem from="1588996308756" duration="14000" />
+      <workItem from="1589295706132" duration="13033000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="WindowStateProjectService">
     <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1588643835202">

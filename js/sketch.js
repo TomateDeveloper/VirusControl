@@ -54,21 +54,30 @@ let activeTimer = false;
     Assets
  */
 let logo;
+let hands;
 let canvas;
 let levels = [];
+let viritusSprite = [];
+
+let stage1;
 
 /*
     P5.JS Functions
  */
 function preload() {
+    hands = loadImage('img/manitas.png');
     logo = loadImage('img/logo.png');
+    viritusSprite[0] = loadImage('sprites/viritus/viritus_1.png');
+    viritusSprite[1] = loadImage('sprites/viritus/viritus_2.png');
+
+    stage1 = loadImage('img/background/ws1.png');
 }
 
 function setup() {
     canvas = createCanvas(600, 400);
-    levels[0] = new Level("cityOne", 10, "TODO", 120, 2, 3);
-    levels[1] = new Level("cityTwo", 30, "TODO", 180, 30, 3);
-    levels[2] = new Level("cityThree", 50, "TODO", 180, 60, 3);
+    levels[0] = new Level("cityOne", 10, stage1, 120, 20, 3);
+    levels[1] = new Level("cityTwo", 30, "TODO", 180, 30, 5);
+    levels[2] = new Level("cityThree", 50, "TODO", 180, 60, 4);
 }
 
 function draw() {
@@ -77,10 +86,12 @@ function draw() {
     } else if (level == null) {
         playScreen();
     } else {
-        background(96, 157, 255);
+        level.generateBackground();
         showScore();
         showTimer();
         level.draw();
+        cursor('none');
+        image(hands, (mouseX - 30), (mouseY - 30), 60, 60);
     }
 
     if (activeTimer) {
@@ -95,6 +106,11 @@ function draw() {
     } else if (level != null) {
         level.generateRate();
     }
+
+    if (frameCount % 60 === 0) registeredVirus.forEach((virus) => {
+        virus.changeFrame();
+    });
+
 }
 
 function mousePressed() {
@@ -164,7 +180,7 @@ class HoverButton {
 
 class Virus {
 
-    constructor(id, speed, radius, x, y, health, score) {
+    constructor(id, speed, radius, x, y, health, score, sprites) {
         this.id = id;
         this.xSpeed = speed;
         this.ySpeed = speed;
@@ -173,13 +189,14 @@ class Virus {
         this.y = y;
         this.health = health;
         this.score = score;
+        this.sprites = sprites;
+        this.actualFrame = 0;
         this.registerListener(id);
     }
 
     draw() {
 
-        fill("#000000");
-        rect((this.x - (this.radius / 2)), (this.y - (this.radius / 2)), this.radius, this.radius);
+        this.drawSprite();
         this.x += this.xSpeed;
         this.y += this.ySpeed;
 
@@ -202,6 +219,16 @@ class Virus {
             addScore(this.score);
         }
     }
+
+    drawSprite() {
+        image(this.sprites[this.actualFrame], (this.x - (this.radius / 2)), (this.y - (this.radius / 2)), this.radius, this.radius);
+    }
+
+    changeFrame() {
+        this.actualFrame++;
+        if (this.actualFrame > (this.sprites.length - 1)) this.actualFrame = 0;
+    }
+
 }
 
 class Level {
@@ -219,11 +246,9 @@ class Level {
     initializeLevel() {
         activeTimer = true;
         timer = this.time;
-        this.spawnRate = spawnRate;
     }
 
     draw() {
-        this.generateBackground();
         registeredVirus.forEach((virus) => {
             virus.draw();
         });
@@ -231,14 +256,14 @@ class Level {
 
     generateRate() {
         if (this.virusCount > 0) {
-            spawnVirus();
+            spawnVirus("viritus");
             spawnRate = this.spawnRate;
             this.virusCount--;
         }
     }
 
     generateBackground() {
-        //TODO: Generate background
+        image(this.background, 0, 0, width, height);
     }
 
     killVirus() {
@@ -265,9 +290,14 @@ function playScreen() {
     const hoverStart = new HoverButton('startButton',200, 270, 200, 30, '#ffffff', '#000000', '¡Jugar!');
     hoverStart.click = function () {
         level = levels[0];
+        level.initializeLevel();
         clearButtons();
         clear();
     }
+}
+
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
 }
 
 function showScore() {
@@ -294,8 +324,31 @@ function clearButtons() {
     registeredButtons = [];
 }
 
-function spawnVirus() {
-    let virus = new Virus(registeredVirus.length + 1, .5, 40, 100, 100, 1, 10);
+function spawnVirus(probability) {
+
+    const virusX = getRandomArbitrary(40, (width - 40));
+    const virusY = getRandomArbitrary(40, (height - 40));
+
+    switch (probability) {
+        case "malvavirus": {
+            new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
+                viritusSprite
+            );
+            break;
+        }
+        case "corona_chan": {
+            new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
+                viritusSprite
+            );
+            break;
+        }
+        default: {
+            new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
+                viritusSprite
+            );
+            break;
+        }
+    }
 }
 
 function addScore(n) {
