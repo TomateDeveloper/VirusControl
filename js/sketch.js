@@ -59,6 +59,7 @@ let canvas;
 let levels = [];
 let viritusSprite = [];
 
+let playScreenBG;
 let stage1;
 
 /*
@@ -70,6 +71,7 @@ function preload() {
     viritusSprite[0] = loadImage('sprites/viritus/viritus_1.png');
     viritusSprite[1] = loadImage('sprites/viritus/viritus_2.png');
 
+    playScreenBG = loadImage('img/playscreen.png');
     stage1 = loadImage('img/background/ws1.png');
 }
 
@@ -282,12 +284,12 @@ class Level {
  */
 
 function playScreen() {
-    background(96, 157, 255);
+    image(playScreenBG, 0, 0, width, height);
     fill(255);
     logo.resize(200, 0);
-    image(logo, 200, 80);
+    image(logo, 185, 80);
 
-    const hoverStart = new HoverButton('startButton',200, 270, 200, 30, '#ffffff', '#000000', '¡Jugar!');
+    const hoverStart = new HoverButton('startButton',185, 270, 200, 30, '#479A78', '#ffffff', '¡Jugar!');
     hoverStart.click = function () {
         level = levels[0];
         level.initializeLevel();
