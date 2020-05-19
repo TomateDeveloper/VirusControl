@@ -20,6 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d98b11b9-b912-4bb0-8910-b8ce3b683703" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/font/nickson_one.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/VirusControl.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/VirusControl.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/sketch.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/sketch.js" afterDir="false" />
@@ -50,7 +52,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/img/background" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/font" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -61,13 +63,14 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Users\WebstormProjects\VirusControl\img\background" />
-      <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl\img" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl" />
       <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl\js" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Users\WebstormProjects\VirusControl\font" />
+      <recent name="D:\Users\WebstormProjects\VirusControl\img\background" />
+      <recent name="C:\Users\Ian Castaño\WebstormProjects\VirusControl\img" />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -89,7 +92,9 @@
       <workItem from="1588701540043" duration="839000" />
       <workItem from="1588811325477" duration="1473000" />
       <workItem from="1588996308756" duration="14000" />
-      <workItem from="1589295706132" duration="15179000" />
+      <workItem from="1589295706132" duration="15975000" />
+      <workItem from="1589322345398" duration="68000" />
+      <workItem from="1589837172923" duration="11471000" />
     </task>
     <servers />
   </component>
@@ -106,6 +111,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1588643835202">

@@ -49,6 +49,7 @@ let spawnRate = 0;
  * @type {boolean}
  */
 let activeTimer = false;
+let drawCircle = true;
 
 /*
     Assets
@@ -58,9 +59,23 @@ let hands;
 let canvas;
 let levels = [];
 let viritusSprite = [];
+let malvavirusSprite = [];
+let coronaChanSprite = [];
 
 let playScreenBG;
+let playAgainBG;
+let uiFont;
+let timerUI;
+let scoreUI;
 let stage1;
+let stage2;
+let stage3;
+let laserEffect;
+
+let mainSound;
+let level1Sound;
+let level2Sound;
+let level3Sound;
 
 /*
     P5.JS Functions
@@ -68,26 +83,41 @@ let stage1;
 function preload() {
     hands = loadImage('img/manitas.png');
     logo = loadImage('img/logo.png');
+    scoreUI = loadImage('img/ui/1.png');
+    timerUI = loadImage('img/ui/2.png');
+    uiFont = loadFont('font/nickson_one.ttf');
+    mainSound = loadSound('sounds/main.mp3');
+    laserEffect = loadSound('sounds/shot.mp3');
+    level1Sound = loadSound('sounds/level_3.mp3');
+    level2Sound = loadSound('sounds/level_3.mp3');
+    level3Sound = loadSound('sounds/level_3.mp3');
     viritusSprite[0] = loadImage('sprites/viritus/viritus_1.png');
     viritusSprite[1] = loadImage('sprites/viritus/viritus_2.png');
-
+    malvavirusSprite[0] = loadImage('sprites/malvavirus/1.png');
+    malvavirusSprite[1] = loadImage('sprites/malvavirus/2.png');
+    coronaChanSprite[0] = loadImage('sprites/coronachan/1.png');
+    coronaChanSprite[1] = loadImage('sprites/coronachan/2.png');
     playScreenBG = loadImage('img/playscreen.png');
+    playAgainBG = loadImage('img/playAgain.png');
     stage1 = loadImage('img/background/ws1.png');
+    stage2 = loadImage('img/background/ws1.png');
+    stage3 = loadImage('img/background/ws1.png');
 }
 
 function setup() {
     canvas = createCanvas(600, 400);
-    levels[0] = new Level("cityOne", 10, stage1, 120, 20, 3);
-    levels[1] = new Level("cityTwo", 30, "TODO", 180, 30, 5);
-    levels[2] = new Level("cityThree", 50, "TODO", 180, 60, 4);
+    levels[0] = new Level("cityOne", [0, 20], stage1, 5, 60, 2, level1Sound);
+    levels[1] = new Level("cityTwo", [0, 55], stage2, 180, 30, 5, level2Sound);
+    levels[2] = new Level("cityThree", [30, 80], stage3, 180, 60, 4, level3Sound);
 }
 
 function draw() {
     if (playAgain) {
-
+        playAgainScreen();
     } else if (level == null) {
         playScreen();
     } else {
+        textFont(uiFont);
         level.generateBackground();
         showScore();
         showTimer();
@@ -109,14 +139,13 @@ function draw() {
         level.generateRate();
     }
 
-    if (frameCount % 60 === 0) registeredVirus.forEach((virus) => {
+    if (frameCount % 30 === 0) registeredVirus.forEach((virus) => {
         virus.changeFrame();
     });
 
 }
 
 function mousePressed() {
-
     registeredButtons.forEach((button) => {
         if (mouseX > button.x && mouseX < (button.x + button.w) && mouseY > button.y && mouseY < (button.y + button.h)) {
             button.click();
@@ -129,7 +158,10 @@ function mousePressed() {
         const leftBottom = (virus.y - (virus.radius / 2));
         const rightBottom = leftBottom + virus.radius;
 
-       if (mouseX > leftTop && mouseX < rightTop && mouseY > leftBottom && mouseY < rightBottom) virus.click();
+       if (mouseX > leftTop && mouseX < rightTop && mouseY > leftBottom && mouseY < rightBottom) {
+           virus.click();
+           laserEffect.play();
+       }
     });
 
 }
@@ -235,7 +267,7 @@ class Virus {
 
 class Level {
 
-    constructor(id, difficulty, background, time, virusCount, spawnRate) {
+    constructor(id, difficulty, background, time, virusCount, spawnRate, sound) {
         this.id = id;
         this.difficulty = difficulty;
         this.background = background;
@@ -243,11 +275,13 @@ class Level {
         this.virusCount = virusCount;
         this.remainingVirus = virusCount;
         this.spawnRate = spawnRate;
+        this.sound = sound;
     }
 
     initializeLevel() {
         activeTimer = true;
         timer = this.time;
+        this.sound.play();
     }
 
     draw() {
@@ -258,7 +292,7 @@ class Level {
 
     generateRate() {
         if (this.virusCount > 0) {
-            spawnVirus("viritus");
+            spawnVirus();
             spawnRate = this.spawnRate;
             this.virusCount--;
         }
@@ -284,6 +318,7 @@ class Level {
  */
 
 function playScreen() {
+    if (!mainSound.isPlaying()) mainSound.play();
     image(playScreenBG, 0, 0, width, height);
     fill(255);
     logo.resize(200, 0);
@@ -294,6 +329,22 @@ function playScreen() {
         level = levels[0];
         level.initializeLevel();
         clearButtons();
+        stopSounds();
+        clear();
+    }
+}
+
+function playAgainScreen() {
+    image(playAgainBG, 0, 0, width, height);
+    fill(255);
+
+    const hoverStart = new HoverButton('replayButton',185, 270, 200, 30, '#479A78', '#ffffff', '¡Volver a jugar!');
+    hoverStart.click = function () {
+        level = levels[0];
+        level.initializeLevel();
+        playAgain = false;
+        clearButtons();
+        stopSounds();
         clear();
     }
 }
@@ -303,9 +354,10 @@ function getRandomArbitrary(min, max) {
 }
 
 function showScore() {
-    fill("#000000");
+    image(scoreUI, 30, 10, 150, 50);
+    fill("#6b2600");
     textSize(30);
-    text("Puntaje: " + score, 15, 40);
+    text("Puntaje: " + score, 53, 43);
 }
 
 function showTimer() {
@@ -313,9 +365,11 @@ function showTimer() {
     let seconds = Math.floor(timer % 60);
     if (seconds === 0) seconds = '00';
 
-    fill("#000000");
-    textSize(30);
-    text(minutes + ":" + seconds, 450, 40);
+    fill("#6b2600");
+    textSize(32);
+
+    image(timerUI, 380, 10, 150, 50);
+    text(minutes + ":" + seconds, 440, 42);
 }
 
 /*
@@ -326,31 +380,31 @@ function clearButtons() {
     registeredButtons = [];
 }
 
-function spawnVirus(probability) {
+function spawnVirus() {
 
     const virusX = getRandomArbitrary(40, (width - 40));
     const virusY = getRandomArbitrary(40, (height - 40));
 
-    switch (probability) {
-        case "malvavirus": {
-            new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
-                viritusSprite
-            );
-            break;
-        }
-        case "corona_chan": {
-            new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
-                viritusSprite
-            );
-            break;
-        }
-        default: {
-            new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
-                viritusSprite
-            );
-            break;
-        }
+    let probability = Math.floor(Math.random() * (+level.difficulty[1] - +level.difficulty[0])) + +level.difficulty[0];
+
+    if (probability > 50) {
+        new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 6, 60,
+            coronaChanSprite
+        );
+    } else if (probability < 50 && probability > 20) {
+        new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 3, 30,
+            malvavirusSprite
+        );
+    } else {
+        new Virus(registeredVirus.length + 1, .5, 80, virusX, virusY, 1, 10,
+            viritusSprite
+        );
     }
+}
+
+function stopSounds() {
+    mainSound.stop();
+    if (level.sound) level.sound.stop();
 }
 
 function addScore(n) {
@@ -366,7 +420,12 @@ function resetScore() {
 }
 
 function timerOut() {
-    //TODO: Time out :))
+    playAgain = true;
+    level = null;
+    registeredVirus = [];
+    textFont('Helvetica');
+    textSize(10);
+    cursor('default');
 }
 
 
