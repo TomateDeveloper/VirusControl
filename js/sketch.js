@@ -33,6 +33,7 @@ let level = null;
  * Check if lose screen is active
  */
 let playAgain = false;
+let win = false;
 /**
  * This is the score of every level
  * @type {number}
@@ -43,13 +44,13 @@ let score = 0;
  * @type {number}
  */
 let timer = 120;
+let transitionTime = 0;
 let spawnRate = 0;
 /**
  * Will loop countdown only if active
  * @type {boolean}
  */
 let activeTimer = false;
-let drawCircle = true;
 
 /*
     Assets
@@ -64,6 +65,7 @@ let coronaChanSprite = [];
 
 let playScreenBG;
 let playAgainBG;
+let winBG;
 let uiFont;
 let timerUI;
 let scoreUI;
@@ -76,6 +78,14 @@ let mainSound;
 let level1Sound;
 let level2Sound;
 let level3Sound;
+let transitionSound;
+
+let instruction1;
+let instructionCorona1;
+let instruction2;
+let instructionCorona2;
+let instructionTilting = true;
+let changingScene = false;
 
 /*
     P5.JS Functions
@@ -86,11 +96,17 @@ function preload() {
     scoreUI = loadImage('img/ui/1.png');
     timerUI = loadImage('img/ui/2.png');
     uiFont = loadFont('font/nickson_one.ttf');
+    instruction1 = loadImage('img/ui/pointer_1.png');
+    instruction2 = loadImage('img/ui/pointer_2.png');
+    instructionCorona1 = loadImage('img/ui/corona_help.png');
+    instructionCorona2 = loadImage('img/ui/corona_help2.png');
+    winBG = loadImage('img/winScreen.png');
     mainSound = loadSound('sounds/main.mp3');
     laserEffect = loadSound('sounds/shot.mp3');
-    level1Sound = loadSound('sounds/level_3.mp3');
-    level2Sound = loadSound('sounds/level_3.mp3');
+    level1Sound = loadSound('sounds/level_1.mp3');
+    level2Sound = loadSound('sounds/level_2.mp3');
     level3Sound = loadSound('sounds/level_3.mp3');
+    transitionSound = loadSound('sounds/transition.mp3');
     viritusSprite[0] = loadImage('sprites/viritus/viritus_1.png');
     viritusSprite[1] = loadImage('sprites/viritus/viritus_2.png');
     malvavirusSprite[0] = loadImage('sprites/malvavirus/1.png');
@@ -100,48 +116,94 @@ function preload() {
     playScreenBG = loadImage('img/playscreen.png');
     playAgainBG = loadImage('img/playAgain.png');
     stage1 = loadImage('img/background/ws1.png');
-    stage2 = loadImage('img/background/ws1.png');
-    stage3 = loadImage('img/background/ws1.png');
+    stage2 = loadImage('img/background/ws2.png');
+    stage3 = loadImage('img/background/ws3.png');
 }
 
 function setup() {
     canvas = createCanvas(600, 400);
-    levels[0] = new Level("cityOne", [0, 20], stage1, 5, 60, 2, level1Sound);
-    levels[1] = new Level("cityTwo", [0, 55], stage2, 180, 30, 5, level2Sound);
-    levels[2] = new Level("cityThree", [30, 80], stage3, 180, 60, 4, level3Sound);
+    levels[0] = new Level("cityOne", [0, 25], stage1, 60, 25, 2, level1Sound);
+    levels[0].transition = function transition() {
+        stopSounds();
+        if (transitionSound.isPlaying()) transitionSound.play();
+        image(playScreenBG, 0, 0, width, height);
+        textSize(100);
+        text('Nivel 2', (width / 2) - 100, (height / 2));
+
+        if (transitionTime === 0) {
+            changingScene = false;
+            registeredVirus = [];
+            level = levels[1];
+            level.initializeLevel();
+        }
+    };
+    levels[1] = new Level("cityTwo", [0, 55], stage2, 60, 40, 1, level2Sound);
+    levels[1].transition = function transition() {
+        stopSounds();
+        image(playScreenBG, 0, 0, width, height);
+        textSize(70);
+        text('Nivel Final', (width / 2) - 150, (height / 2));
+
+        if (transitionTime === 0) {
+            changingScene = false;
+            registeredVirus = [];
+            level = levels[2];
+            level.initializeLevel();
+        }
+    };
+    levels[2] = new Level("cityThree", [30, 80], stage3, 50, 48, 1, level3Sound);
+    levels[2].levelVictory = function levelVictory() {
+        win = true;
+        clear();
+    };
 }
 
 function draw() {
-    if (playAgain) {
-        playAgainScreen();
-    } else if (level == null) {
-        playScreen();
+
+    if (win) {
+        gameVictory();
     } else {
-        textFont(uiFont);
-        level.generateBackground();
-        showScore();
-        showTimer();
-        level.draw();
-        cursor('none');
-        image(hands, (mouseX - 30), (mouseY - 30), 60, 60);
-    }
-
-    if (activeTimer) {
-        if (frameCount % 60 === 0 && timer > 0) timer --;
-        if (timer < 1) timerOut();
-    }
-
-    if (spawnRate > 0) {
-        if (frameCount % 60 === 0) {
-            spawnRate --;
+        if (playAgain) {
+            playAgainScreen();
+        } else if (level == null) {
+            playScreen();
+        } else {
+            textFont(uiFont);
+            level.generateBackground();
+            showScore();
+            showTimer();
+            if (changingScene) {
+                level.transition();
+            } else {
+                level.draw();
+            }
+            cursor('none');
+            image(hands, (mouseX - 30), (mouseY - 30), 60, 60);
         }
-    } else if (level != null) {
-        level.generateRate();
-    }
 
-    if (frameCount % 30 === 0) registeredVirus.forEach((virus) => {
-        virus.changeFrame();
-    });
+        if (activeTimer) {
+            if (frameCount % 60 === 0 && timer > 0) timer --;
+            if (timer < 1) timerOut();
+        }
+
+        if (spawnRate > 0) {
+            if (frameCount % 60 === 0) {
+                spawnRate --;
+            }
+        } else if (level != null) {
+            level.generateRate();
+        }
+
+        if (frameCount % 60 === 0) instructionTilting = !instructionTilting;
+
+        if (changingScene) {
+            if (frameCount % 60 === 0 && transitionTime > 0) transitionTime--;
+        }
+
+        if (frameCount % 30 === 0) registeredVirus.forEach((virus) => {
+            virus.changeFrame();
+        });
+    }
 
 }
 
@@ -279,6 +341,7 @@ class Level {
     }
 
     initializeLevel() {
+        stopSounds();
         activeTimer = true;
         timer = this.time;
         this.sound.play();
@@ -289,6 +352,8 @@ class Level {
             virus.draw();
         });
     }
+
+    transition() {}
 
     generateRate() {
         if (this.virusCount > 0) {
@@ -304,11 +369,12 @@ class Level {
 
     killVirus() {
         this.remainingVirus--;
-        if (this.remainingVirus < 1) this.levelVictory();
+        if (this.remainingVirus < 1 || this.virusCount < 1) this.levelVictory();
     }
 
     levelVictory() {
-        console.log("Ganaste el nivel");
+        transitionTime = 6;
+        changingScene = true;
     }
 
 }
@@ -327,11 +393,30 @@ function playScreen() {
     const hoverStart = new HoverButton('startButton',185, 270, 200, 30, '#479A78', '#ffffff', '¡Jugar!');
     hoverStart.click = function () {
         level = levels[0];
+        stopSounds();
         level.initializeLevel();
         clearButtons();
-        stopSounds();
         clear();
     }
+
+    if (instructionTilting) {
+        instruction1.resize(50, 0);
+        instructionCorona1.resize(50, 0);
+        image(instructionCorona1, 30, 20);
+        image(instruction1, 70, 50);
+    } else {
+        instruction1.resize(50, 0);
+        instructionCorona2.resize(50, 0);
+        image(instructionCorona2, 30, 20);
+        image(instruction2, 70, 50);
+        instruction2.resize(50, 0);
+    }
+    fill('black');
+    textStyle(BOLD);
+    textSize(15);
+    text('Pista: Click para matar virus', 120, 40);
+    textStyle(NORMAL);
+
 }
 
 function playAgainScreen() {
@@ -340,13 +425,13 @@ function playAgainScreen() {
 
     const hoverStart = new HoverButton('replayButton',185, 270, 200, 30, '#479A78', '#ffffff', '¡Volver a jugar!');
     hoverStart.click = function () {
-        level = levels[0];
-        level.initializeLevel();
-        playAgain = false;
-        clearButtons();
-        stopSounds();
-        clear();
+        window.location.reload(false);
     }
+
+    color('white');
+    textSize(60);
+    textFont(uiFont);
+    text('¡Haz perdido!', (width / 2) - 130, (height / 2));
 }
 
 function getRandomArbitrary(min, max) {
@@ -354,7 +439,7 @@ function getRandomArbitrary(min, max) {
 }
 
 function showScore() {
-    image(scoreUI, 30, 10, 150, 50);
+    image(scoreUI, 30, 10, 200, 50);
     fill("#6b2600");
     textSize(30);
     text("Puntaje: " + score, 53, 43);
@@ -379,6 +464,11 @@ function showTimer() {
 function clearButtons() {
     registeredButtons = [];
 }
+
+function gameVictory() {
+    image(winBG, 0, 0, width, height);
+}
+
 
 function spawnVirus() {
 
@@ -405,6 +495,7 @@ function spawnVirus() {
 function stopSounds() {
     mainSound.stop();
     if (level.sound) level.sound.stop();
+    transitionSound.stop();
 }
 
 function addScore(n) {
@@ -423,6 +514,7 @@ function timerOut() {
     playAgain = true;
     level = null;
     registeredVirus = [];
+    score = 0;
     textFont('Helvetica');
     textSize(10);
     cursor('default');

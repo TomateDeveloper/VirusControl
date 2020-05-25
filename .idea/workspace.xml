@@ -20,10 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d98b11b9-b912-4bb0-8910-b8ce3b683703" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/font/nickson_one.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/VirusControl.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/VirusControl.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/sketch.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/sketch.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -94,7 +91,10 @@
       <workItem from="1588996308756" duration="14000" />
       <workItem from="1589295706132" duration="15975000" />
       <workItem from="1589322345398" duration="68000" />
-      <workItem from="1589837172923" duration="11471000" />
+      <workItem from="1589837172923" duration="11541000" />
+      <workItem from="1589924251239" duration="765000" />
+      <workItem from="1590346504639" duration="18695000" />
+      <workItem from="1590422347889" duration="13782000" />
     </task>
     <servers />
   </component>
